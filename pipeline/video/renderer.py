@@ -1,8 +1,8 @@
-from planner.prompts import plan
+from pipeline.planner.prompts import plan
 from ffmpeg import input
 from os import makedirs
 from datetime import datetime
-from research.topic import research,score,pick_score
+from pipeline.research.topic import research,score,pick_score
 
 
 #cut source video into segments
