@@ -1,4 +1,6 @@
-anthropic
-python-dotenv
-pydantic
 requests
+python-dotenv
+openai
+pytrends
+pandas
+youtube-transcript-api

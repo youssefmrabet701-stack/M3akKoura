@@ -2,7 +2,7 @@ from pipeline.planner.prompts import plan
 from ffmpeg import input
 from os import makedirs
 from datetime import datetime
-from pipeline.research.topic import research,score,pick_score
+from pipeline.research.topic import research,score
 
 
 #cut source video into segments
@@ -40,7 +40,7 @@ def concat():
     
 
 r = research("research/keywords.txt")
-topic = pick_score(score(r))
+topic = score(r)
 source_video = [
     {
         "path": "./media/clips/2.mov",

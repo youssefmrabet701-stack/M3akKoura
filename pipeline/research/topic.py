@@ -19,15 +19,10 @@ def score(df):
         G = E/previous_avg if previous_avg !=0 else 0
         score = 0.6 * G + 0.4 * E
         scores[i] = score
-    return scores
-
-
-def pick_score(scores):
     return max(scores, key=scores.get)
 
 
-keywords="research/keywords.txt"
+
+keywords="config/keywords.txt"
 r=research(keywords)
-print(r)
-scores = score(r)
-print(pick_score(scores))
+print(score(r))

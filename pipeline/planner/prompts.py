@@ -17,7 +17,7 @@ def plan(topic,clips):
     api_key = os.getenv("NVIDIA_API_KEY")
     )
     completion = client.chat.completions.create(
-        model="meta/llama-3.2-11b-vision-instruct",
+        model = "moonshotai/kimi-k3",
         messages=[{"role":"system","content":"You are an expert short-form football video editor specializing in TikTok reels. You create precise, beat-driven edit plans. You only use clips provided to you — never invent clip names. Always respond with valid JSON only, no extra text."},{"role" : "user","content": f"""Create a detailed edit plan for a football reel about: {topic}
 
         Available clips:
