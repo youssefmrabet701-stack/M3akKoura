@@ -22,7 +22,6 @@ def score(df):
     return max(scores, key=scores.get)
 
 
-
-keywords="config/keywords.txt"
-r=research(keywords)
-print(score(r))
+def get_player():
+    keywords="config/keywords.txt"
+    return score(research(keywords))

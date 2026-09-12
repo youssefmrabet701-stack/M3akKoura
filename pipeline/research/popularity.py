@@ -1,7 +1,6 @@
 import requests
 import os
 from dotenv import load_dotenv
-from youtube_transcript_api import YouTubeTranscriptApi
 
 def search_videos(query):
     url = "https://www.googleapis.com/youtube/v3/search"
@@ -31,17 +30,13 @@ def get_most_popular(data):
     scores={}
     for i in data["items"]:
         scores[i["id"]] = int(i["statistics"]["viewCount"])
-        print(get_transcript(i["id"]))
-    return max(scores, key=scores.get)
+    return sort_by_views(scores)
 
-def get_transcript(video_id):
-    return YouTubeTranscriptApi().fetch(video_id)
+def sort_by_views(data):
+    return sorted(data.items(),key = lambda x: x[1],reverse=True)
     
-if __name__ == "__main__":
-    #Cristiano ronaldo for testing
-    query = "Cristiano Ronaldo"
-    data = search_videos(query)
+def get_ranked_videos(player):
+    data = search_videos(player)
     video_ids = get_video_ids(data)
     view_data = get_view_counts(video_ids)
-    print(get_most_popular(view_data))
-    
+    return get_most_popular(view_data)

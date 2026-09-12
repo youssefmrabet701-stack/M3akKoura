@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 import base64
 from json import loads
+from shutil import rmtree
 
 
 def extract_frame(video_path, output_folder):
@@ -62,9 +63,13 @@ def pick_best_moments(descriptions):
 
     return loads(completion.choices[0].message.content)
 
-if __name__ == "__main__":
-    video_path="media/EpYAMVUIufc.webm"
+def clear_frames(folder):
+    rmtree(folder)
+    os.mkdir(folder)
+
+def analyze_video(video_path):
     output_path= "media/frames/"
     extract_frame(video_path,output_path)
     descriptions = describe_all_frames(output_path)
-    print(pick_best_moments(descriptions))
+    clear_frames(output_path)
+    return pick_best_moments(descriptions)

@@ -50,13 +50,7 @@ def confirm_team(player,teams_id):
             confirmed.append(i)
     return confirmed
 
-
-
-
-if __name__ == "__main__":
-    keywords="config/keywords.txt"
-    player = score(research(keywords))  
-    
+def get_confirmed_teams(player):
     url2 ="https://en.wikipedia.org/w/api.php"
     headers_wiki = {"User-Agent": "M3akKoura/1.0 (youssefmrabet701@gmail.com)"}
     response2 = requests.get(url2 , headers=headers_wiki ,params = {
@@ -70,6 +64,6 @@ if __name__ == "__main__":
     page = list(response2.json()["query"]["pages"].values())[0]
     wiki_text = page["extract"]
     teams = extract_teams(wiki_text)
-    print(get_team_id(teams))
-    print(confirm_team(player,get_team_id(teams)))
+    return confirm_team(player,get_team_id(teams))
+
     
