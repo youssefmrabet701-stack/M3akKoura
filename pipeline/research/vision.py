@@ -8,7 +8,7 @@ from shutil import rmtree
 
 
 def extract_frame(video_path, output_folder):
-    subprocess.run(["ffmpeg", "-i", video_path, "-vf", "fps=1/5", f"{output_folder}/frame_%04d.jpg"])
+    subprocess.run(["ffmpeg", "-loglevel", "error", "-i", video_path, "-vf", "fps=1/5", f"{output_folder}/frame_%04d.jpg"])
 
 def describe_frame(image_path):
     with open(image_path, "rb") as f:
@@ -40,29 +40,32 @@ def describe_all_frames(folder):
     return desc    
 
 def pick_best_moments(descriptions):
-    string=""
-    for i,d in enumerate(descriptions):
-        string += f"frame {i*5} : {d}\n"
-    load_dotenv()
-    client = OpenAI(
-        base_url = "https://integrate.api.nvidia.com/v1",
-        api_key = os.getenv("NVIDIA_API_KEY"))
-    completion = client.chat.completions.create(
-        model="moonshotai/kimi-k3",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are analyzing a sequence of frame-by-frame descriptions from a football highlight video, taken every 5 seconds. Identify which frame numbers correspond to actual goal moments or celebrations worth using as a video clip. Respond with valid JSON only: a list of objects, each with 'frame' (the frame number) and 'reason' (short explanation)."
-            },
-            {
-                "role": "user",
-                "content": f"Here are the frame descriptions:\n\n{string}\n\nWhich frames show real goal moments or celebrations worth clipping?"
-            }
-        ]
-    )
-
-    return loads(completion.choices[0].message.content)
-
+    try:
+        string=""
+        for i,d in enumerate(descriptions):
+            string += f"frame {i*5} : {d}\n"
+        load_dotenv()
+        client = OpenAI(
+            base_url = "https://integrate.api.nvidia.com/v1",
+            api_key = os.getenv("NVIDIA_API_KEY"))
+        completion = client.chat.completions.create(
+            model="moonshotai/kimi-k3",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are analyzing a sequence of frame-by-frame descriptions from a football highlight video, taken every 5 seconds. Identify which frame numbers correspond to actual goal moments or celebrations worth using as a video clip. Respond with valid JSON only: a list of objects, each with 'frame' (the frame number) and 'reason' (short explanation)."
+                },
+                {
+                    "role": "user",
+                    "content": f"Here are the frame descriptions:\n\n{string}\n\nWhich frames show real goal moments or celebrations worth clipping?"
+                }
+            ]
+        )
+        return loads(completion.choices[0].message.content)
+    except:
+        return []
+        
+        
 def clear_frames(folder):
     rmtree(folder)
     os.mkdir(folder)

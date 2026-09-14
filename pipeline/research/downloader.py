@@ -24,7 +24,7 @@ def download_video(video_id):
         return 
     else:
         print("done downloading")
-        return info["_filename"]
+        return info["requested_downloads"][0]["filepath"]
     
 if __name__ == "__main__":
     video_id = sys.argv[1]

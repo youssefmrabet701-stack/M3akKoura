@@ -2,13 +2,17 @@ import requests
 import os
 from dotenv import load_dotenv
 
-def search_videos(query):
+def search_videos(player,teams):
     url = "https://www.googleapis.com/youtube/v3/search"
     load_dotenv()
     key = os.getenv('YOUTUBE_API_KEY')
-    response = requests.get(url, params={"key": key ,"part": "snippet","type":"video","q":query})
-    data = response.json()
-    return data
+    vids = []
+    for team in teams:
+        response = requests.get(url, params={"key": key ,"part": "snippet","type":"video","q":f"{player} {team}"}).json()
+        vids.extend(get_video_ids(response))
+    return vids
+        
+
 def get_video_ids(data):
     video_ids = []
     for item in data["items"]:
@@ -34,9 +38,8 @@ def get_most_popular(data):
 
 def sort_by_views(data):
     return sorted(data.items(),key = lambda x: x[1],reverse=True)
-    
-def get_ranked_videos(player):
-    data = search_videos(player)
-    video_ids = get_video_ids(data)
-    view_data = get_view_counts(video_ids)
+            
+def get_ranked_videos(player,teams):
+    data = search_videos(player,teams)
+    view_data = get_view_counts(data)
     return get_most_popular(view_data)
