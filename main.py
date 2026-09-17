@@ -4,6 +4,7 @@ from pipeline.research.popularity import get_ranked_videos
 from pipeline.research.downloader import download_video
 from pipeline.research.vision import analyze_video
 import os
+from pipeline.video.renderer import organize_clips,cut,concat
 
 if __name__ == "__main__":
     player = get_player()
@@ -34,3 +35,7 @@ if __name__ == "__main__":
         print("ANALYZING:", i)
         vids_moments[i] = analyze_video(i)
         print("MOMENTS:", vids_moments[i])
+    
+    clips=organize_clips(vids_moments)
+    cut(player, clips)
+    concat()

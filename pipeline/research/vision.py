@@ -8,29 +8,33 @@ from shutil import rmtree
 
 
 def extract_frame(video_path, output_folder):
+    os.makedirs("media/frames", exist_ok=True)
     subprocess.run(["ffmpeg", "-loglevel", "error", "-i", video_path, "-vf", "fps=1/5", f"{output_folder}/frame_%04d.jpg"])
 
 def describe_frame(image_path):
-    with open(image_path, "rb") as f:
-        encoded_image = base64.b64encode(f.read()).decode("utf-8")
-    load_dotenv()
-    client = OpenAI(
-        base_url = "https://integrate.api.nvidia.com/v1",
-        api_key = os.getenv("NVIDIA_API_KEY"))
-    completion = client.chat.completions.create(
-    model="meta/llama-3.2-11b-vision-instruct",
-    messages=[
-        {"role": "system", "content": "You are analyzing frames from a football (soccer) highlight video, one frame at a time. Describe only what is visibly happening — player actions, ball position, celebrations, replays, crowd reactions. Be concise, factual, and specific. If the frame shows a goal being scored or celebrated, say so explicitly."},
-        {
-            "role": "user",
-            "content": [
-                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"}},
-                {"type": "text", "text": "Describe this frame in one or two sentences, focusing on player action, ball position, and whether this looks like a goal moment, celebration, replay, or neutral gameplay."}
-            ]
-        }
-    ],
-    max_tokens=256)
-    return completion.choices[0].message.content
+    try:
+        with open(image_path, "rb") as f:
+            encoded_image = base64.b64encode(f.read()).decode("utf-8")
+        load_dotenv()
+        client = OpenAI(
+            base_url = "https://integrate.api.nvidia.com/v1",
+            api_key = os.getenv("NVIDIA_API_KEY"))
+        completion = client.chat.completions.create(
+        model="meta/llama-3.2-11b-vision-instruct",
+        messages=[
+            {"role": "system", "content": "You are analyzing frames from a football (soccer) highlight video, one frame at a time. Describe only what is visibly happening — player actions, ball position, celebrations, replays, crowd reactions. Be concise, factual, and specific. If the frame shows a goal being scored or celebrated, say so explicitly."},
+            {
+                "role": "user",
+                "content": [
+                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"}},
+                    {"type": "text", "text": "Describe this frame in one or two sentences, focusing on player action, ball position, and whether this looks like a goal moment, celebration, replay, or neutral gameplay."}
+                ]
+            }
+        ],
+        max_tokens=256)
+        return completion.choices[0].message.content
+    except:
+        return ""
     
 def describe_all_frames(folder):
     desc = []

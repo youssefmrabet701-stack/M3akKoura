@@ -2,6 +2,8 @@ import requests
 import os
 from dotenv import load_dotenv
 
+
+
 def search_videos(player,teams):
     url = "https://www.googleapis.com/youtube/v3/search"
     load_dotenv()

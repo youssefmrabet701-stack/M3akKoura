@@ -1,17 +1,20 @@
 import yt_dlp
 import sys
+import os
 
 
 def download_video(video_id):
     test=False
     for i in range(3):
         try: 
+            os.makedirs("media", exist_ok=True)
             #something + id
             url = "https://www.youtube.com/watch?v="+video_id
             #options : format , maybe quality ...
             options = {
                 "format": "bestvideo[height<=720]+bestaudio/best[height<=720]",
-                "outtmpl": "media/%(id)s.%(ext)s"
+                "outtmpl": "media/%(id)s.%(ext)s",
+                "quiet": True
             }
             with yt_dlp.YoutubeDL(options) as ydl:
                 info = ydl.extract_info(url, download=True)
