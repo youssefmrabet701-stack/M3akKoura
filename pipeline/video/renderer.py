@@ -11,6 +11,9 @@ def cut(topic, source_video):
     with open("media/seg.txt", 'w') as f:
         st = ""
         edit_plan = plan(topic, source_video)
+        if not edit_plan:
+            print(f"plan() returned empty for topic '{topic}' — skipping cut, no segments to write")
+            return
         for i, clip in enumerate(edit_plan['clip_order']):
             print(clip)
             output_path = f"./media/segments/{i}.mov"
@@ -23,15 +26,21 @@ def cut(topic, source_video):
                 continue
             st += "file " + output_path + "\n"
             ffmpeg.input(source_video[clip_num]['path'], ss=start, to=end).output(output_path).run()
-        f.write(st[:-1])
+        if st != "":
+            f.write(st[:-1])
+        else:
+            print("No clips written — every clip exceeded its source video's duration")
 
 
 def concat():
     makedirs("./media/concatenation", exist_ok=True)
     output_path = "./media/concatenation/" + datetime.now().strftime("%Y%m%d_%H%M%S") + ".mp4"
-    with open("media/seg.txt", 'r') as f:
-        ffmpeg.input('media/seg.txt', format='concat', safe=0).output(output_path).run()
-    os.remove("media/seg.txt")
+    path = "media/seg.txt"
+    if not os.path.exists(path):
+        print(f"{path} not found — no segments cut from video")
+        return 
+    ffmpeg.input(path, format='concat', safe=0).output(output_path).run()
+    os.remove(path)
 
 def cut_moment(video_path, moment):
     makedirs("./media/clips", exist_ok=True)

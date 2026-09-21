@@ -9,7 +9,7 @@ def clip_descriptor(clips):
         res+= f"clip_{idx+1}: max_duration: {i['duration']} description: {i['description']} \n"
     return res
 
-def plan(topic,clips):
+def plan(topic,clips):  
     try:
         load_dotenv()
         client = OpenAI(
